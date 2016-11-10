@@ -28,5 +28,5 @@ SET(${PROJECT_NAME}_INCLUDES "includes/Loggable.h")
 #https://cmake.org/cmake/help/v3.0/command/install.html 
 install(TARGETS ${PROJECT_NAME}	LIBRARY DESTINATION "lib")
 install(FILES ${${PROJECT_NAME}_INCLUDES} DESTINATION "include")
-install(DIRECTORY "spdlog/include" DESTINATION "include")
+install(DIRECTORY "spdlog/include/spdlog" DESTINATION "include")
 	
