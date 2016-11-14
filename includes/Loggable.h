@@ -11,7 +11,7 @@
 #include <string>
 #include <spdlog/spdlog.h>
 
-namespace dccomms {
+namespace cpplogging {
 
 namespace spd = spdlog;
 
@@ -22,9 +22,9 @@ public:
 	Loggable(std::string logname = "console");
 	virtual ~Loggable();
 
-	void SetLogName(std::string name);
-	void LogToConsole(bool);
-	void SetLogLevel(LogLevel);
+	virtual void SetLogName(std::string name);
+	virtual void LogToConsole(bool);
+	virtual void SetLogLevel(Loggable::LogLevel);
 
 	std::string LogName;
 	LogLevel Level;
@@ -32,6 +32,6 @@ public:
 
 };
 
-} /* namespace dccomms */
+} /* namespace cpplogging */
 
 #endif /* INCLUDES_LOGGABLE_H_ */

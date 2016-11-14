@@ -8,7 +8,7 @@
 #include <Loggable.h>
 #include <spdlog/spdlog.h>
 
-namespace dccomms {
+namespace cpplogging {
 
 namespace spd = spdlog;
 
@@ -22,6 +22,10 @@ Loggable::~Loggable() {
 	spd::drop(LogName);
 }
 
+void Loggable::LogToConsole(bool _logtoconsole)
+{
+
+}
 
 void Loggable::SetLogName(std::string newname)
 {
@@ -77,4 +81,4 @@ void Loggable::SetLogLevel(LogLevel _level)
 
 
 
-} /* namespace dccomms */
+} /* namespace cpplogging */
