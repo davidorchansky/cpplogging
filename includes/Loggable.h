@@ -25,7 +25,9 @@ public:
 	virtual void SetLogName(std::string name);
 	virtual void LogToConsole(bool);
 	virtual void SetLogLevel(Loggable::LogLevel);
+	virtual std::string GetLogName(){return LogName;};
 
+protected:
 	std::string LogName;
 	LogLevel Level;
 	std::shared_ptr<spd::logger> Log;
