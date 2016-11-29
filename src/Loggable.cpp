@@ -48,6 +48,7 @@ void Loggable::SetLogName(std::string newname)
 
 void Loggable::SetLogLevel(LogLevel _level)
 {
+	Level = _level;
 	if(Log)
 	{
 		switch(_level)
