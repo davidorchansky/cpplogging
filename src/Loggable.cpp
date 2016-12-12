@@ -27,6 +27,40 @@ void Loggable::LogToConsole(bool _logtoconsole)
 
 }
 
+spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level)
+{
+    switch(_level)
+    {
+    case critical:
+        return spd::level::critical;
+        break;
+    case debug:
+        return spd::level::debug;
+        break;
+    case err:
+        return spd::level::err;
+        break;
+    case info:
+        return spd::level::info;
+        break;
+    case off:
+        return spd::level::off;
+        break;
+    case trace:
+        return spd::level::trace;
+        break;
+    case warn:
+        return spd::level::warn;
+        break;
+    }
+    return spd::level::info;
+}
+
+void Loggable::FlushLogOn(LogLevel level)
+{
+    Log->flush_on(GetSpdLevel(level));
+}
+
 void Loggable::SetLogName(std::string newname)
 {
 	if(newname != LogName)

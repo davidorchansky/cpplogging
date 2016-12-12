@@ -26,8 +26,10 @@ public:
 	virtual void LogToConsole(bool);
 	virtual void SetLogLevel(Loggable::LogLevel);
 	virtual std::string GetLogName(){return LogName;};
+        virtual void FlushLogOn(LogLevel);
 
 protected:
+        spdlog::level::level_enum GetSpdLevel(LogLevel);
 	std::string LogName;
 	LogLevel Level;
 	std::shared_ptr<spd::logger> Log;
