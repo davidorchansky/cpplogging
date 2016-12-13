@@ -7,6 +7,8 @@
 
 #include <Loggable.h>
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/file_sinks.h>
+#include <spdlog/sinks/stdout_sinks.h>
 
 namespace cpplogging {
 
@@ -15,7 +17,16 @@ namespace spd = spdlog;
 Loggable::Loggable(std::string logname)
 {
 	Level = LogLevel::debug;
+    dist_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
+    console_sink= std::make_shared<spdlog::sinks::stdout_sink_mt>();
+
+    dist_sink->add_sink(console_sink);
+    logToConsole = true;
+
 	SetLogName(logname);
+
+
+
 }
 
 Loggable::~Loggable() {
@@ -24,7 +35,29 @@ Loggable::~Loggable() {
 
 void Loggable::LogToConsole(bool _logtoconsole)
 {
+    if(logToConsole)
+    {
+        if (!_logtoconsole)
+        {
+            dist_sink->remove_sink(console_sink);
+            logToConsole = false; // == _logtoconsole
+        }
+    }
+    else
+    {
+        if(_logtoconsole)
+        {
+            dist_sink->add_sink(console_sink);
+            logToConsole = true;
+        }
+    }
+}
 
+void Loggable::LogToFile(const std::string & filename )
+{
+    auto fileSink = std::make_shared<spd::sinks::simple_file_sink_mt>
+            (filename);
+    dist_sink->add_sink(fileSink);
 }
 
 spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level)
@@ -74,7 +107,7 @@ void Loggable::SetLogName(std::string newname)
 		Log = spd::get(LogName);
 		if(!Log)
 		{
-			Log = spd::stdout_color_mt(LogName);
+            Log= std::make_shared<spdlog::logger>(LogName, dist_sink);
 		}
 		SetLogLevel(Level);
 	}
