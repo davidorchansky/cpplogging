@@ -11,6 +11,9 @@
 #include <string>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/dist_sink.h>
+#include <spdlog/sinks/ansicolor_sink.h>
+#include <iostream>
+#include <memory>
 
 namespace cpplogging {
 
@@ -29,10 +32,11 @@ public:
 	virtual void SetLogLevel(Loggable::LogLevel);
 	virtual std::string GetLogName(){return LogName;};
         virtual void FlushLogOn(LogLevel);
-
+        virtual void FlushLog();
 protected:
         std::shared_ptr<spd::sinks::dist_sink_mt> dist_sink;
-        std::shared_ptr<spd::sinks::stdout_sink_mt> console_sink;
+        //std::shared_ptr<spd::sinks::stdout_sink_mt> console_sink;
+        std::shared_ptr<spdlog::sinks::ansicolor_sink> console_sink;
 
         spdlog::level::level_enum GetSpdLevel(LogLevel);
 	std::string LogName;

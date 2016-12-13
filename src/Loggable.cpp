@@ -17,9 +17,9 @@ namespace spd = spdlog;
 Loggable::Loggable(std::string logname)
 {
 	Level = LogLevel::debug;
+    auto stdout_sink = spdlog::sinks::stdout_sink_mt::instance();
+    console_sink = std::make_shared<spdlog::sinks::ansicolor_sink>(stdout_sink);
     dist_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
-    console_sink= std::make_shared<spdlog::sinks::stdout_sink_mt>();
-
     dist_sink->add_sink(console_sink);
     logToConsole = true;
 
@@ -58,6 +58,11 @@ void Loggable::LogToFile(const std::string & filename )
     auto fileSink = std::make_shared<spd::sinks::simple_file_sink_mt>
             (filename);
     dist_sink->add_sink(fileSink);
+}
+
+void Loggable::FlushLog()
+{
+    Log->flush();
 }
 
 spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level)
