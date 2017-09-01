@@ -11,6 +11,7 @@ endif ()
  
 add_library(${PROJECT_NAME} SHARED
     src/Loggable.cpp
+    src/Logger.cpp
     )
 
 SET(${PROJECT_NAME}_CXX_COMPILE_FLAGS "-fPIC -std=c++0x")
