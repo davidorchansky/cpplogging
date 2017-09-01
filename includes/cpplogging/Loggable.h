@@ -21,16 +21,16 @@ namespace spd = spdlog;
 
 class Loggable {
 public:
-	enum LogLevel {critical, debug, err, info, off, trace, warn };
+        enum LogLevel {critical, debug, err, info, off, trace, warn };
 
-        Loggable(std::string logname = "log");
+	Loggable(std::string logname = "log");
 	virtual ~Loggable();
 
         virtual void SetLogName(std::string name);
         virtual void LogToFile(const std::string & filename );
-	virtual void LogToConsole(bool);
-	virtual void SetLogLevel(Loggable::LogLevel);
-	virtual std::string GetLogName(){return LogName;};
+        virtual void LogToConsole(bool);
+        virtual void SetLogLevel(Loggable::LogLevel);
+        virtual std::string GetLogName(){return LogName;};
         virtual void FlushLogOn(LogLevel);
         virtual void FlushLog();
 protected:
@@ -38,11 +38,11 @@ protected:
         //std::shared_ptr<spd::sinks::stdout_sink_mt> console_sink;
         std::shared_ptr<spdlog::sinks::ansicolor_sink> console_sink;
 
-        spdlog::level::level_enum GetSpdLevel(LogLevel);
+	spdlog::level::level_enum GetSpdLevel(LogLevel);
 	std::string LogName;
 	LogLevel Level;
 	std::shared_ptr<spd::logger> Log;
-        bool logToConsole;
+	bool logToConsole;
 
 };
 

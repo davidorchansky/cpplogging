@@ -9,7 +9,9 @@ if (WIN32)
   set(CMAKE_SHARED_LIBRARY_PREFIX "")
 endif ()
  
-add_library(${PROJECT_NAME} SHARED src/Loggable.cpp)
+add_library(${PROJECT_NAME} SHARED
+    src/Loggable.cpp
+    )
 
 SET(${PROJECT_NAME}_CXX_COMPILE_FLAGS "-fPIC -std=c++0x")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${${PROJECT_NAME}_CXX_COMPILE_FLAGS}")

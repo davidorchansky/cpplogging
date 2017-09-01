@@ -5,7 +5,7 @@
  *      Author: diego
  */
 
-#include <Loggable.h>
+#include <cpplogging/Loggable.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/file_sinks.h>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -16,21 +16,21 @@ namespace spd = spdlog;
 
 Loggable::Loggable(std::string logname)
 {
-	Level = LogLevel::debug;
+        Level = LogLevel::debug;
     auto stdout_sink = spdlog::sinks::stdout_sink_mt::instance();
     console_sink = std::make_shared<spdlog::sinks::ansicolor_sink>(stdout_sink);
     dist_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
     dist_sink->add_sink(console_sink);
     logToConsole = true;
 
-	SetLogName(logname);
+        SetLogName(logname);
 
 
 
 }
 
 Loggable::~Loggable() {
-	spd::drop(LogName);
+        spd::drop(LogName);
 }
 
 void Loggable::LogToConsole(bool _logtoconsole)
@@ -112,7 +112,7 @@ void Loggable::SetLogName(std::string newname)
 		Log = spd::get(LogName);
 		if(!Log)
 		{
-            Log= std::make_shared<spdlog::logger>(LogName, dist_sink);
+	    Log= std::make_shared<spdlog::logger>(LogName, dist_sink);
 		}
 		SetLogLevel(Level);
 	}
