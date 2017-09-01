@@ -14,6 +14,7 @@
 #include <spdlog/sinks/ansicolor_sink.h>
 #include <iostream>
 #include <memory>
+#include <cpplogging/types.h>
 
 namespace cpplogging {
 
@@ -21,7 +22,6 @@ namespace cpplogging {
 
   class Loggable {
   public:
-    enum LogLevel {critical, debug, err, info, off, trace, warn };
 
     Loggable(std::string logname = "log");
     virtual ~Loggable();
@@ -29,7 +29,7 @@ namespace cpplogging {
     virtual void SetLogName(std::string name);
     virtual void LogToFile(const std::string & filename );
     virtual void LogToConsole(bool);
-    virtual void SetLogLevel(Loggable::LogLevel);
+    virtual void SetLogLevel(LogLevel);
     virtual std::string GetLogName(){return LogName;}
     virtual void FlushLogOn(LogLevel);
     virtual void FlushLog();
