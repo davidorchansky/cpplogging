@@ -8,7 +8,45 @@ set(CMAKE_COLOR_MAKEFILE   ON)
 if (WIN32)
   set(CMAKE_SHARED_LIBRARY_PREFIX "")
 endif ()
- 
+
+SET(PROJECT_NAME_ORIG cpplogging)
+message("Building ${PROJECT_NAME_ORIG}...")
+
+#BEGIN RESOLVE GIT REVISION
+#https://bravenewmethod.com/2017/07/14/git-revision-as-compiler-definition-in-build-with-cmake/
+message(STATUS "Resolving GIT Version...")
+set(_build_version "unknown")
+find_package(Git)
+if(GIT_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE _build_version
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  message( STATUS "GIT hash: ${_build_version}")
+else()
+  message(STATUS "GIT not found")
+endif()
+string(TIMESTAMP _time_stamp)
+#END RESOLVE GIT REVISION
+
+SET(PROJECT_NAME_GIT "${PROJECT_NAME_ORIG}_${_build_version}")
+string(TOUPPER ${PROJECT_NAME_ORIG} TMP0)
+SET(${TMP0}_GIT "${PROJECT_NAME_GIT}" PARENT_SCOPE)
+
+if (TARGET ${PROJECT_NAME_GIT})
+    message(WARNING "${PROJECT_NAME_GIT} has already been built!")
+    return()
+endif()
+
+project (${PROJECT_NAME_GIT} CXX)
+message(STATUS "PROJECT NAME: ${PROJECT_NAME}")
+
+###############################
+###############################
+
 add_library(${PROJECT_NAME} SHARED
     src/Loggable.cpp
     src/Logger.cpp
@@ -31,4 +69,5 @@ SET(${PROJECT_NAME}_INCLUDES "includes/Loggable.h")
 install(TARGETS ${PROJECT_NAME}	LIBRARY DESTINATION "lib")
 install(FILES ${${PROJECT_NAME}_INCLUDES} DESTINATION "include")
 install(DIRECTORY "spdlog/include/spdlog" DESTINATION "include")
-	
+
+message("End ${PROJECT_NAME_ORIG}")
