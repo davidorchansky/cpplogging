@@ -6,152 +6,119 @@
  */
 
 #include <cpplogging/Loggable.h>
-#include <spdlog/spdlog.h>
 #include <spdlog/sinks/file_sinks.h>
 #include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/spdlog.h>
 
 namespace cpplogging {
 
-  namespace spd = spdlog;
+namespace spd = spdlog;
 
-  Loggable::Loggable(std::string logname)
-  {
-    Level = LogLevel::debug;
-    auto stdout_sink = spdlog::sinks::stdout_sink_mt::instance();
-    console_sink = std::make_shared<spdlog::sinks::ansicolor_sink>(stdout_sink);
-    dist_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
-    dist_sink->add_sink(console_sink);
-    logToConsole = true;
+Loggable::Loggable(std::string logname) {
+  Level = LogLevel::debug;
+  auto stdout_sink = spdlog::sinks::stdout_sink_mt::instance();
+  console_sink = std::make_shared<spdlog::sinks::ansicolor_sink>(stdout_sink);
+  dist_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
+  dist_sink->add_sink(console_sink);
+  logToConsole = true;
 
-    SetLogName(logname);
+  SetLogName(logname);
+}
 
+Loggable::~Loggable() { spd::drop(LogName); }
 
-
-  }
-
-  Loggable::~Loggable() {
-    spd::drop(LogName);
-  }
-
-  void Loggable::LogToConsole(bool _logtoconsole)
-  {
-    if(logToConsole)
-    {
-      if (!_logtoconsole)
-      {
-        dist_sink->remove_sink(console_sink);
-        logToConsole = false; // == _logtoconsole
-      }
+void Loggable::LogToConsole(bool _logtoconsole) {
+  if (logToConsole) {
+    if (!_logtoconsole) {
+      dist_sink->remove_sink(console_sink);
+      logToConsole = false; // == _logtoconsole
     }
-    else
-    {
-      if(_logtoconsole)
-      {
-        dist_sink->add_sink(console_sink);
-        logToConsole = true;
-      }
+  } else {
+    if (_logtoconsole) {
+      dist_sink->add_sink(console_sink);
+      logToConsole = true;
     }
   }
+}
 
-  void Loggable::LogToFile(const std::string & filename )
-  {
-    auto fileSink = std::make_shared<spd::sinks::simple_file_sink_mt>
-        (filename);
-    dist_sink->add_sink(fileSink);
-  }
+void Loggable::LogToFile(const std::string &filename) {
+  auto fileSink = std::make_shared<spd::sinks::simple_file_sink_mt>(filename);
+  dist_sink->add_sink(fileSink);
+}
 
-  void Loggable::FlushLog()
-  {
-    Log->flush();
-  }
+void Loggable::FlushLog() { Log->flush(); }
 
-  spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level)
-  {
-    switch(_level)
-    {
-      case critical:
-        return spd::level::critical;
-        break;
-      case debug:
-        return spd::level::debug;
-        break;
-      case err:
-        return spd::level::err;
-        break;
-      case info:
-        return spd::level::info;
-        break;
-      case off:
-        return spd::level::off;
-        break;
-      case trace:
-        return spd::level::trace;
-        break;
-      case warn:
-        return spd::level::warn;
-        break;
-    }
+spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level) {
+  switch (_level) {
+  case critical:
+    return spd::level::critical;
+    break;
+  case debug:
+    return spd::level::debug;
+    break;
+  case err:
+    return spd::level::err;
+    break;
+  case info:
     return spd::level::info;
+    break;
+  case off:
+    return spd::level::off;
+    break;
+  case trace:
+    return spd::level::trace;
+    break;
+  case warn:
+    return spd::level::warn;
+    break;
   }
+  return spd::level::info;
+}
 
-  void Loggable::FlushLogOn(LogLevel level)
-  {
-    Log->flush_on(GetSpdLevel(level));
+void Loggable::FlushLogOn(LogLevel level) { Log->flush_on(GetSpdLevel(level)); }
+
+void Loggable::SetLogName(std::string newname) {
+  if (newname != LogName) {
+    if (Log) {
+      spd::drop(LogName);
+    }
+    LogName = newname;
+
+    Log = spd::get(LogName);
+    if (!Log) {
+      Log = std::make_shared<spdlog::logger>(LogName, dist_sink);
+    }
+    SetLogLevel(Level);
   }
+}
 
-  void Loggable::SetLogName(std::string newname)
-  {
-    if(newname != LogName)
-    {
-      if(Log)
-      {
-        spd::drop(LogName);
-      }
-      LogName = newname;
-
-      Log = spd::get(LogName);
-      if(!Log)
-      {
-        Log= std::make_shared<spdlog::logger>(LogName, dist_sink);
-      }
-      SetLogLevel(Level);
+void Loggable::SetLogLevel(LogLevel _level) {
+  Level = _level;
+  if (Log) {
+    switch (_level) {
+    case critical:
+      Log->set_level(spd::level::critical);
+      break;
+    case debug:
+      Log->set_level(spd::level::debug);
+      break;
+    case err:
+      Log->set_level(spd::level::err);
+      break;
+    case info:
+      Log->set_level(spd::level::info);
+      break;
+    case off:
+      Log->set_level(spd::level::off);
+      break;
+    case trace:
+      Log->set_level(spd::level::trace);
+      break;
+    case warn:
+      Log->set_level(spd::level::warn);
+      break;
     }
   }
-
-  void Loggable::SetLogLevel(LogLevel _level)
-  {
-    Level = _level;
-    if(Log)
-    {
-      switch(_level)
-      {
-        case critical:
-          Log->set_level(spd::level::critical);
-          break;
-        case debug:
-          Log->set_level(spd::level::debug);
-          break;
-        case err:
-          Log->set_level(spd::level::err);
-          break;
-        case info:
-          Log->set_level(spd::level::info);
-          break;
-        case off:
-          Log->set_level(spd::level::off);
-          break;
-        case trace:
-          Log->set_level(spd::level::trace);
-          break;
-        case warn:
-          Log->set_level(spd::level::warn);
-          break;
-      }
-    }
-  }
-
-
-
-
+}
 
 } /* namespace cpplogging */

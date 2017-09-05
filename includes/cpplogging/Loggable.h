@@ -8,43 +8,42 @@
 #ifndef INCLUDES_LOGGABLE_H_
 #define INCLUDES_LOGGABLE_H_
 
-#include <string>
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/dist_sink.h>
-#include <spdlog/sinks/ansicolor_sink.h>
+#include <cpplogging/types.h>
 #include <iostream>
 #include <memory>
-#include <cpplogging/types.h>
+#include <spdlog/sinks/ansicolor_sink.h>
+#include <spdlog/sinks/dist_sink.h>
+#include <spdlog/spdlog.h>
+#include <string>
 
 namespace cpplogging {
 
-  namespace spd = spdlog;
+namespace spd = spdlog;
 
-  class Loggable {
-  public:
+class Loggable {
+public:
+  Loggable(std::string logname = "log");
+  virtual ~Loggable();
 
-    Loggable(std::string logname = "log");
-    virtual ~Loggable();
+  virtual void SetLogName(std::string name);
+  virtual void LogToFile(const std::string &filename);
+  virtual void LogToConsole(bool);
+  virtual void SetLogLevel(LogLevel);
+  virtual std::string GetLogName() { return LogName; }
+  virtual void FlushLogOn(LogLevel);
+  virtual void FlushLog();
 
-    virtual void SetLogName(std::string name);
-    virtual void LogToFile(const std::string & filename );
-    virtual void LogToConsole(bool);
-    virtual void SetLogLevel(LogLevel);
-    virtual std::string GetLogName(){return LogName;}
-    virtual void FlushLogOn(LogLevel);
-    virtual void FlushLog();
-  protected:
-    std::shared_ptr<spd::sinks::dist_sink_mt> dist_sink;
-    //std::shared_ptr<spd::sinks::stdout_sink_mt> console_sink;
-    std::shared_ptr<spdlog::sinks::ansicolor_sink> console_sink;
+protected:
+  std::shared_ptr<spd::sinks::dist_sink_mt> dist_sink;
+  // std::shared_ptr<spd::sinks::stdout_sink_mt> console_sink;
+  std::shared_ptr<spdlog::sinks::ansicolor_sink> console_sink;
 
-    spdlog::level::level_enum GetSpdLevel(LogLevel);
-    std::string LogName;
-    LogLevel Level;
-    std::shared_ptr<spd::logger> Log;
-    bool logToConsole;
-
-  };
+  spdlog::level::level_enum GetSpdLevel(LogLevel);
+  std::string LogName;
+  LogLevel Level;
+  std::shared_ptr<spd::logger> Log;
+  bool logToConsole;
+};
 
 } /* namespace cpplogging */
 

@@ -3,8 +3,7 @@
 
 namespace cpplogging {
 
-    enum LogLevel {critical, debug, err, info, off, trace, warn };
-
+enum LogLevel { critical, debug, err, info, off, trace, warn };
 }
 
 #endif // TYPES_H
