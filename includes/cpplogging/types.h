@@ -1,9 +1,9 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef CPPLOGGING_TYPES_H
+#define CPPLOGGING_TYPES_H
 
 namespace cpplogging {
 
 enum LogLevel { critical, debug, err, info, off, trace, warn };
 }
 
-#endif // TYPES_H
+#endif // CPPLOGGING_TYPES_H
