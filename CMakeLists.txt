@@ -63,11 +63,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${${PROJECT_NAME}_INCLUDE_DIRS
 
 target_link_libraries(${PROJECT_NAME} pthread)
 
-SET(${PROJECT_NAME}_INCLUDES "includes/Loggable.h")
-
 #https://cmake.org/cmake/help/v3.0/command/install.html 
 install(TARGETS ${PROJECT_NAME}	LIBRARY DESTINATION "lib")
-install(FILES ${${PROJECT_NAME}_INCLUDES} DESTINATION "include")
 install(DIRECTORY "spdlog/include/spdlog" DESTINATION "include")
+install(DIRECTORY "includes/cpplogging" DESTINATION "include")
 
 message("End ${PROJECT_NAME_ORIG}")
