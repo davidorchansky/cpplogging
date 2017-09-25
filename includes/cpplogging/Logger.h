@@ -1,5 +1,5 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef CPPLOGGING_LOGGER_H
+#define CPPLOGGING_LOGGER_H
 
 #include <cpplogging/Loggable.h>
 
@@ -37,4 +37,4 @@ static LoggerPtr CreateLogger(std::string logname) {
 }
 }
 
-#endif // LOGGER_H
+#endif // CPPLOGGING_LOGGER_H_

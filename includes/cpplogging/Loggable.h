@@ -5,8 +5,8 @@
  *      Author: diego
  */
 
-#ifndef INCLUDES_LOGGABLE_H_
-#define INCLUDES_LOGGABLE_H_
+#ifndef CPPLOGGING_LOGGABLE_H_
+#define CPPLOGGING_LOGGABLE_H_
 
 #include <cpplogging/types.h>
 #include <iostream>
@@ -47,4 +47,4 @@ protected:
 
 } /* namespace cpplogging */
 
-#endif /* INCLUDES_LOGGABLE_H_ */
+#endif /* CPPLOGGING_LOGGABLE_H_ */
