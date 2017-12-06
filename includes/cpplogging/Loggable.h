@@ -40,7 +40,7 @@ protected:
 
   spdlog::level::level_enum GetSpdLevel(LogLevel);
   std::string LogName;
-  LogLevel Level;
+  LogLevel Level, flushLevel;
   std::shared_ptr<spd::logger> Log;
   bool logToConsole;
 };

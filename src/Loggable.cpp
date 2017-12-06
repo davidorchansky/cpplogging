@@ -21,6 +21,7 @@ Loggable::Loggable(std::string logname) {
   dist_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
   dist_sink->add_sink(console_sink);
   logToConsole = true;
+  flushLevel = LogLevel::err;
 
   SetLogName(logname);
 }
@@ -75,7 +76,9 @@ spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level) {
   return spd::level::info;
 }
 
-void Loggable::FlushLogOn(LogLevel level) { Log->flush_on(GetSpdLevel(level)); }
+void Loggable::FlushLogOn(LogLevel level) {
+  flushLevel = level;
+  Log->flush_on(GetSpdLevel(flushLevel)); }
 
 void Loggable::SetLogName(std::string newname) {
   if (newname != LogName) {
@@ -88,6 +91,7 @@ void Loggable::SetLogName(std::string newname) {
     if (!Log) {
       Log = std::make_shared<spdlog::logger>(LogName, dist_sink);
     }
+    FlushLogOn(flushLevel);
     SetLogLevel(Level);
   }
 }
