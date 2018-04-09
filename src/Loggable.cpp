@@ -22,6 +22,7 @@ Loggable::Loggable(std::string logname) {
   dist_sink->add_sink(console_sink);
   logToConsole = true;
   flushLevel = LogLevel::err;
+  SetLogFormatter(std::make_shared<spdlog::pattern_formatter>("%+"));
 
   SetLogName(logname);
 }
@@ -78,7 +79,14 @@ spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level) {
 
 void Loggable::FlushLogOn(LogLevel level) {
   flushLevel = level;
-  Log->flush_on(GetSpdLevel(flushLevel)); }
+  Log->flush_on(GetSpdLevel(flushLevel));
+}
+
+void Loggable::SetLogFormatter(spdlog::formatter_ptr formatter) {
+  _formatter = formatter;
+  if (Log)
+    Log->set_formatter(formatter);
+}
 
 void Loggable::SetLogName(std::string newname) {
   if (newname != LogName) {
@@ -90,6 +98,7 @@ void Loggable::SetLogName(std::string newname) {
     Log = spd::get(LogName);
     if (!Log) {
       Log = std::make_shared<spdlog::logger>(LogName, dist_sink);
+      Log->set_formatter(_formatter);
     }
     FlushLogOn(flushLevel);
     SetLogLevel(Level);

@@ -32,6 +32,7 @@ public:
   virtual std::string GetLogName() { return LogName; }
   virtual void FlushLogOn(LogLevel);
   virtual void FlushLog();
+  virtual void SetLogFormatter(spdlog::formatter_ptr);
 
 protected:
   std::shared_ptr<spd::sinks::dist_sink_mt> dist_sink;
@@ -42,6 +43,7 @@ protected:
   std::string LogName;
   LogLevel Level, flushLevel;
   std::shared_ptr<spd::logger> Log;
+  spdlog::formatter_ptr _formatter;
   bool logToConsole;
 };
 
