@@ -22,10 +22,9 @@ Loggable::Loggable(std::string logname) {
   dist_sink->add_sink(console_sink);
   logToConsole = true;
   flushLevel = LogLevel::err;
-  SetLogFormatter(std::make_shared<spdlog::pattern_formatter>("%+"));
-
-  SetLogName(logname);
   _async = false;
+  SetLogFormatter(std::make_shared<spdlog::pattern_formatter>("%+"));
+  SetLogName(logname);
 }
 
 Loggable::~Loggable() { spd::drop(LogName); }
