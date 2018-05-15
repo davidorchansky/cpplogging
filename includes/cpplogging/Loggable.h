@@ -33,6 +33,8 @@ public:
   virtual void FlushLogOn(LogLevel);
   virtual void FlushLog();
   virtual void SetLogFormatter(spdlog::formatter_ptr);
+  virtual void SetAsyncMode(uint32_t qsize = 8192);
+  virtual void SetSyncMode();
 
 protected:
   std::shared_ptr<spd::sinks::dist_sink_mt> dist_sink;
@@ -45,6 +47,8 @@ protected:
   std::shared_ptr<spd::logger> Log;
   spdlog::formatter_ptr _formatter;
   bool logToConsole;
+  bool _async;
+  uint32_t _async_qsize;
 };
 
 } /* namespace cpplogging */

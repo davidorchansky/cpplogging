@@ -25,6 +25,7 @@ Loggable::Loggable(std::string logname) {
   SetLogFormatter(std::make_shared<spdlog::pattern_formatter>("%+"));
 
   SetLogName(logname);
+  _async = false;
 }
 
 Loggable::~Loggable() { spd::drop(LogName); }
@@ -49,6 +50,17 @@ void Loggable::LogToFile(const std::string &filename) {
 }
 
 void Loggable::FlushLog() { Log->flush(); }
+
+void Loggable::SetAsyncMode(uint32_t qsize) {
+  _async_qsize = qsize;
+  spdlog::set_async_mode(_async_qsize);
+  _async = true;
+}
+
+void Loggable::SetSyncMode() {
+  spdlog::set_sync_mode();
+  _async = false;
+}
 
 spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level) {
   switch (_level) {
@@ -99,9 +111,13 @@ void Loggable::SetLogName(std::string newname) {
     if (!Log) {
       Log = std::make_shared<spdlog::logger>(LogName, dist_sink);
       Log->set_formatter(_formatter);
+      FlushLogOn(flushLevel);
+      SetLogLevel(Level);
+      if (_async)
+        SetAsyncMode(_async_qsize);
+      else
+        SetSyncMode();
     }
-    FlushLogOn(flushLevel);
-    SetLogLevel(Level);
   }
 }
 
