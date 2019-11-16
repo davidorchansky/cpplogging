@@ -14,38 +14,52 @@ if (WIN32)
 endif ()
 
 SET(PROJECT_NAME_ORIG cpplogging)
-message("Building ${PROJECT_NAME_ORIG}...")
 
-#BEGIN RESOLVE GIT REVISION
-#https://bravenewmethod.com/2017/07/14/git-revision-as-compiler-definition-in-build-with-cmake/
-message(STATUS "Resolving GIT Version...")
-set(_build_version "unknown")
-find_package(Git)
-if(GIT_FOUND)
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    OUTPUT_VARIABLE _build_version
-    ERROR_QUIET
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  message( STATUS "GIT hash: ${_build_version}")
-else()
-  message(STATUS "GIT not found")
+SET(PROJECT_NAME_BASE ${PROJECT_NAME_ORIG} )
+
+message("Building ${PROJECT_NAME_BASE}...")
+if(DEFINED ${PROJECT_NAME_BASE}_NAME_OVERRIDE)
+    SET(PROJECT_NAME_BASE ${${PROJECT_NAME_BASE}_NAME_OVERRIDE})
 endif()
-string(TIMESTAMP _time_stamp)
-#END RESOLVE GIT REVISION
 
-SET(PROJECT_NAME_GIT "${PROJECT_NAME_ORIG}_${_build_version}")
+if(DISABLE_GIT_HASH)
+	message(STATUS "PROJECT ${PROJECT_NAME_BASE}: DISABLE GIT HASH")
+	SET(PROJECT_NAME_GIT "${PROJECT_NAME_BASE}")
+else()
+	message(STATUS "PROJECT ${PROJECT_NAME_BASE}: GIT HASH ENABLED")
+	#BEGIN RESOLVE GIT REVISION
+	#https://bravenewmethod.com/2017/07/14/git-revision-as-compiler-definition-in-build-with-cmake/
+	message(STATUS "Resolving GIT Version...")
+	set(_build_version "unknown")
+	find_package(Git)
+	if(GIT_FOUND)
+	  execute_process(
+	    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+	    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+	    OUTPUT_VARIABLE _build_version
+	    ERROR_QUIET
+	    OUTPUT_STRIP_TRAILING_WHITESPACE
+	  )
+	  message( STATUS "GIT hash: ${_build_version}")
+	else()
+	  message(STATUS "GIT not found")
+	endif()
+	string(TIMESTAMP _time_stamp)
+	#END RESOLVE GIT REVISION
+
+	SET(PROJECT_NAME_GIT "${PROJECT_NAME_BASE}_${_build_version}")
+endif()
+
+#DECLARE PROJECT
 string(TOUPPER ${PROJECT_NAME_ORIG} TMP0)
 SET(${TMP0}_GIT "${PROJECT_NAME_GIT}" PARENT_SCOPE)
-
 if (TARGET ${PROJECT_NAME_GIT})
     message(WARNING "${PROJECT_NAME_GIT} has already been built!")
     return()
 endif()
 
 project (${PROJECT_NAME_GIT} CXX)
+
 message(STATUS "PROJECT NAME: ${PROJECT_NAME}")
 
 ###############################
