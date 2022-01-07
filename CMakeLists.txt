@@ -74,9 +74,11 @@ SET(${PROJECT_NAME}_CXX_COMPILE_FLAGS "-fPIC -std=c++0x")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${${PROJECT_NAME}_CXX_COMPILE_FLAGS}")
 
 
+find_package(spdlog REQUIRED)
+
 SET(${PROJECT_NAME}_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/includes
-    ${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include
+    ${spdlog_INCLUDE_DIRS}
     )
 
 message(STATUS "${PROJECT_NAME} include dirs: ${${PROJECT_NAME}_INCLUDE_DIRS}")
@@ -87,7 +89,6 @@ target_link_libraries(${PROJECT_NAME} pthread)
 
 #https://cmake.org/cmake/help/v3.0/command/install.html 
 install(TARGETS ${PROJECT_NAME}	LIBRARY DESTINATION "lib")
-install(DIRECTORY "spdlog/include/spdlog" DESTINATION "include")
 install(DIRECTORY "includes/cpplogging" DESTINATION "include")
 
 SET(${PROJECT_NAME}_INCLUDE_DIRS ${${PROJECT_NAME}_INCLUDE_DIRS} CACHE STRING "${PROJECT_NAME} include dirs")

@@ -6,7 +6,7 @@
  */
 
 #include <cpplogging/Loggable.h>
-#include <spdlog/sinks/file_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
 
@@ -16,13 +16,11 @@ namespace spd = spdlog;
 
 Loggable::Loggable(std::string logname) {
   Level = LogLevel::debug;
-  auto stdout_sink = spdlog::sinks::stdout_sink_mt::instance();
-  console_sink = std::make_shared<spdlog::sinks::ansicolor_sink>(stdout_sink);
+  console_sink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
   dist_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
   dist_sink->add_sink(console_sink);
   logToConsole = true;
   flushLevel = LogLevel::err;
-  _async = false;
   SetLogFormatter(std::make_shared<spdlog::pattern_formatter>("%+"));
   SetLogName(logname);
 }
@@ -44,22 +42,11 @@ void Loggable::LogToConsole(bool _logtoconsole) {
 }
 
 void Loggable::LogToFile(const std::string &filename) {
-  auto fileSink = std::make_shared<spd::sinks::simple_file_sink_mt>(filename);
+  auto fileSink = std::make_shared<spd::sinks::basic_file_sink_mt>(filename);
   dist_sink->add_sink(fileSink);
 }
 
 void Loggable::FlushLog() { Log->flush(); }
-
-void Loggable::SetAsyncMode(uint32_t qsize) {
-  _async_qsize = qsize;
-  spdlog::set_async_mode(_async_qsize);
-  _async = true;
-}
-
-void Loggable::SetSyncMode() {
-  spdlog::set_sync_mode();
-  _async = false;
-}
 
 spdlog::level::level_enum Loggable::GetSpdLevel(LogLevel _level) {
   switch (_level) {
@@ -93,10 +80,10 @@ void Loggable::FlushLogOn(LogLevel level) {
   Log->flush_on(GetSpdLevel(flushLevel));
 }
 
-void Loggable::SetLogFormatter(spdlog::formatter_ptr formatter) {
+void Loggable::SetLogFormatter(std::shared_ptr<spdlog::formatter> formatter) {
   _formatter = formatter;
   if (Log)
-    Log->set_formatter(formatter);
+    Log->set_formatter(formatter->clone());
 }
 
 void Loggable::SetLogName(std::string newname) {
@@ -109,13 +96,9 @@ void Loggable::SetLogName(std::string newname) {
     Log = spd::get(LogName);
     if (!Log) {
       Log = std::make_shared<spdlog::logger>(LogName, dist_sink);
-      Log->set_formatter(_formatter);
+      Log->set_formatter(_formatter->clone());
       FlushLogOn(flushLevel);
       SetLogLevel(Level);
-      if (_async)
-        SetAsyncMode(_async_qsize);
-      else
-        SetSyncMode();
     }
   }
 }
